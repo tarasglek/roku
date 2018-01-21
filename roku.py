@@ -50,18 +50,11 @@ def off():
         keypress("Power")
 
 def on():
+    wol.send_magic_packet('3c:59:1e:cf:a0:f0', ip_address=TV)
     while(status()["power-mode"] != "PowerOn"):
         keypress("Power")
 
-def main():
-    global TV
-    command = 'on' # on, cartoon, chromecast
-    if len(sys.argv) == 3:
-        TV = sys.argv[2]
-    if len(sys.argv) == 2:
-        command = sys.argv[1]
-    wol.send_magic_packet('3c:59:1e:cf:a0:f0')
-
+def exec_command(command):
     if (command == 'off'):
         off()
     elif (command == 'on'):
@@ -73,7 +66,16 @@ def main():
     elif (command == 'chromecast'):
         on()
         keypress("InputHDMI3")
+    return status()
 
-    print status()
+def main():
+    global TV
+    command = 'on' # on, cartoon, chromecast
+    if len(sys.argv) == 3:
+        TV = sys.argv[2]
+    if len(sys.argv) == 2:
+        command = sys.argv[1]
+    print(exec_command(command))
 
-main()
+if __name__ == "__main__":
+    main()
